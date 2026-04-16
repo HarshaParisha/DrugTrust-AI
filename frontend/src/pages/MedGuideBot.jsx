@@ -1,14 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Bot, Download, RotateCcw, SendHorizonal, Stethoscope, UserRound } from 'lucide-react';
-import { jsPDF } from 'jspdf';
+import { ArrowLeft, Bot, RotateCcw, SendHorizonal, Stethoscope, UserRound } from 'lucide-react';
 import { allMedicines } from '../data/medicineDatabase';
-import PrescriptionBadge from '../components/PrescriptionBadge';
 import {
   detectCategoryFromComplaint,
-  deriveAgeGroupFromAge,
-  getConsultFlag,
-  getDiagnosisForCategory,
   recommendMedicines,
 } from '../utils/doctorChatEngine';
 
@@ -152,97 +147,6 @@ function buildQuestionQueue(answers) {
   ];
 }
 
-function createPrescriptionPayload(answers, category, recommendations) {
-  const diagnosis = getDiagnosisForCategory(category.key) || category.label || 'General medical guidance';
-  const medicines = recommendations.slice(0, 4).map((med) => ({ ...med }));
-
-  return {
-    patientName: sanitizeText(answers.fullName) || 'Patient',
-    age: sanitizeText(answers.age) || '—',
-    sex: sanitizeText(answers.sex) || '—',
-    diagnosis,
-    dateTimeStr: new Date().toLocaleString(),
-    medicines,
-    advice: [
-      'Take medicines exactly as directed.',
-      'Do not mix with alcohol unless a doctor approves.',
-      'Stop and seek help if symptoms worsen or a new reaction appears.',
-      'Follow up with an in-person doctor if symptoms do not improve.',
-    ],
-  };
-}
-
-function downloadPrescriptionPdf(payload) {
-  const doc = new jsPDF();
-  const margin = 14;
-  const pageW = doc.internal.pageSize.getWidth();
-  let y = 16;
-
-  doc.setTextColor(20, 78, 86);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.text('DrugTrust AI Prescription', margin, y);
-
-  y += 8;
-  doc.setTextColor(80, 90, 100);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.text(`Date: ${payload.dateTimeStr}`, margin, y);
-
-  y += 10;
-  doc.setTextColor(30, 41, 59);
-  doc.setFontSize(11);
-  doc.text(`Patient Name: ${payload.patientName}`, margin, y);
-  y += 7;
-  doc.text(`Age / Sex: ${payload.age} / ${payload.sex}`, margin, y);
-  y += 7;
-  doc.text(`Diagnosis: ${payload.diagnosis}`, margin, y);
-
-  y += 10;
-  doc.setDrawColor(148, 163, 184);
-  doc.line(margin, y, pageW - margin, y);
-  y += 8;
-
-  payload.medicines.forEach((med, idx) => {
-    if (y > 250) {
-      doc.addPage();
-      y = 16;
-    }
-
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(15, 23, 42);
-    doc.text(`${idx + 1}. ${med.name} ${med.strength || ''}`.trim(), margin, y);
-    y += 6;
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(51, 65, 85);
-    doc.text(`Dose: ${med.dosage} | Frequency: ${med.frequency}`, margin, y);
-    y += 5;
-    doc.text(`Duration: ${med.duration}`, margin, y);
-    y += 5;
-    doc.text(`Advice: ${med.foodInstruction}`, margin, y);
-    y += 8;
-  });
-
-  if (y > 240) {
-    doc.addPage();
-    y = 16;
-  }
-
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(20, 78, 86);
-  doc.text('Advice', margin, y);
-  y += 6;
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(51, 65, 85);
-  payload.advice.forEach((line) => {
-    const wrapped = doc.splitTextToSize(`- ${line}`, pageW - margin * 2);
-    doc.text(wrapped, margin, y);
-    y += wrapped.length * 5;
-  });
-
-  doc.save(`DrugTrust_Prescription_${(payload.patientName || 'Patient').replace(/\s+/g, '_')}.pdf`);
-}
-
 function ChatBubble({ role, children }) {
   const isBot = role === 'bot';
   return (
@@ -257,7 +161,7 @@ function ChatBubble({ role, children }) {
   );
 }
 
-function PrescriptionPreview({ payload }) {
+function TabletSuggestions({ items }) {
   return (
     <section
       className="border border-slate-800 rounded-2xl p-4 md:p-5 bg-slate-900/65 mt-4"
@@ -267,39 +171,22 @@ function PrescriptionPreview({ payload }) {
       }}
     >
       <div className="border-b border-dashed border-slate-700 pb-3 mb-3">
-        <p className="font-mono text-xs text-mv-teal uppercase tracking-[0.14em]">DrugTrust AI Prescription</p>
-        <p className="text-[11px] text-slate-400 mt-1">Date: {payload.dateTimeStr}</p>
-      </div>
-
-      <div className="text-xs space-y-1 text-slate-200">
-        <p><span className="text-slate-500">Patient Name:</span> {payload.patientName}</p>
-        <p><span className="text-slate-500">Age / Sex:</span> {payload.age} / {payload.sex}</p>
-        <p><span className="text-slate-500">Diagnosis:</span> {payload.diagnosis}</p>
+        <p className="font-mono text-xs text-mv-teal uppercase tracking-[0.14em]">Suggested Tablets (Knowledge Base)</p>
+        <p className="text-[11px] text-slate-400 mt-1">Top matches from your selected category and symptoms</p>
       </div>
 
       <div className="mt-3 border-t border-slate-800 pt-3 space-y-3">
-        {payload.medicines.map((med, idx) => (
-          <div key={`${med.name}-${idx}`} className="border border-slate-800 rounded-xl p-3 bg-slate-900/85">
-            <div className="flex items-start justify-between gap-3">
+        {items.map((med, idx) => (
+          <div key={`${med.brandName || med.genericName || 'med'}-${idx}`} className="border border-slate-800 rounded-xl p-3 bg-slate-900/85">
+            <div className="flex items-start gap-3">
               <div>
-                <p className="text-xs text-white font-semibold">{idx + 1}. {med.name} {med.strength}</p>
-                <p className="text-[11px] text-slate-300 mt-1">→ {med.dosage} — {med.frequency}</p>
-                <p className="text-[11px] text-slate-300">→ Duration: {med.duration}</p>
-                <p className="text-[11px] text-slate-300">→ {med.foodInstruction}</p>
+                <p className="text-sm text-white font-semibold">{idx + 1}. {med.brandName || med.genericName || 'Medicine suggestion'}</p>
+                {med.genericName && <p className="text-xs text-slate-300 mt-1">Generic: {med.genericName}</p>}
+                {med.usedFor && <p className="text-xs text-slate-300">Used for: {med.usedFor}</p>}
               </div>
-              <PrescriptionBadge prescription={med.prescription} requiresPrescription={med.requiresPrescription} />
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mt-3 pt-3 border-t border-dashed border-slate-700">
-        <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Advice</p>
-        <ul className="mt-1 space-y-1 text-[11px] text-slate-200">
-          {payload.advice.map((line) => (
-            <li key={line}>- {line}</li>
-          ))}
-        </ul>
       </div>
     </section>
   );
@@ -342,9 +229,9 @@ export default function MedGuideBot() {
     return recommendMedicines(allMedicines, recommendationContext);
   }, [consultComplete, emergencyAlert, recommendationContext]);
 
-  const prescriptionPayload = useMemo(() => {
-    if (!consultComplete || emergencyAlert || recommendations.length === 0) return null;
-    return createPrescriptionPayload(answers, category, recommendations);
+  const suggestedTablets = useMemo(() => {
+    if (!consultComplete || emergencyAlert) return [];
+    return recommendations.map((item) => item.medicine).filter(Boolean).slice(0, 5);
   }, [consultComplete, emergencyAlert, recommendations, answers, category]);
 
   const completionPct = Math.min(100, Math.round((Object.keys(answers).length / Math.max(queue.length, 1)) * 100));
@@ -417,8 +304,7 @@ export default function MedGuideBot() {
       }).length === 0) {
         pushBot('I understand your concern. This seems beyond what I can safely advise on within my medicine scope. Please consult a specialist.');
       } else {
-        pushBot('Based on your details and symptoms, I have prepared a structured prescription recommendation below.');
-        pushBot('Your prescription is ready. You can download it as a PDF using the Download Prescription button below.');
+        pushBot('Based on your details and symptoms, here are tablet suggestions from our medicine knowledge base.');
       }
     }
   };
@@ -569,21 +455,9 @@ export default function MedGuideBot() {
               </section>
             )}
 
-            {!emergencyAlert && consultComplete && prescriptionPayload && (
+            {!emergencyAlert && consultComplete && suggestedTablets.length > 0 && (
               <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-3 md:p-4 shrink-0">
-                <PrescriptionPreview payload={prescriptionPayload} />
-
-                <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <button type="button" className="mv-button mv-button-primary" onClick={() => downloadPrescriptionPdf(prescriptionPayload)}>
-                    <Download className="h-3.5 w-3.5" /> Download Prescription as PDF
-                  </button>
-                  <p className="text-[11px] font-mono text-amber-300/90">
-                    {getConsultFlag({
-                      ...recommendationContext,
-                      ageGroup: deriveAgeGroupFromAge(answers.age),
-                    })}
-                  </p>
-                </div>
+                <TabletSuggestions items={suggestedTablets} />
               </div>
             )}
           </div>
