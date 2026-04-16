@@ -1,0 +1,403 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --teal: #00E5CC;
+  --amber: #FFB300;
+  --danger: #FF1744;
+  --safe: #00E676;
+  --app-bg: #0A0E17;
+  --app-fg: #E2E8F0;
+  --card-bg: #111827;
+  --card-border: #1F2937;
+  --grid-line: rgba(0,229,204,0.03);
+  --scan-line: rgba(0,229,204,0.015);
+}
+
+[data-theme='light'] {
+  --app-bg: #e4e4df;
+  --app-fg: #0a0e17;
+  --card-bg: #fafaf8;
+  --card-border: #d4cec6;
+  --grid-line: rgba(15, 23, 42, 0.08);
+  --scan-line: rgba(15, 23, 42, 0.02);
+}
+
+* { box-sizing: border-box; }
+
+*::selection {
+  background: rgba(0, 229, 204, 0.2);
+  color: #e6fffb;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--app-bg);
+  color: var(--app-fg);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  width: 100%;
+  min-height: 100dvh;
+}
+
+img, svg, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.camera-live-video {
+  width: 100%;
+  height: 100% !important;
+  max-width: none;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+a, button {
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, transform 160ms ease, opacity 160ms ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 2px solid rgba(0, 229, 204, 0.8);
+  outline-offset: 2px;
+}
+
+input, textarea, select {
+  font-size: 16px;
+}
+
+/* Scanline texture */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    var(--scan-line) 2px,
+    var(--scan-line) 4px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Clinical grid */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 999;
+}
+
+body.landing-clean::before,
+body.landing-clean::after {
+  display: none;
+}
+
+/* Typography utilities */
+.font-mono { font-family: 'IBM Plex Mono', monospace; }
+.font-sans  { font-family: 'DM Sans', sans-serif; }
+
+/* No rounded corners — sharp clinical edges */
+.clinical-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 1rem;
+}
+
+.clinical-card-hover {
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.clinical-card-hover:hover {
+  border-color: rgba(0, 229, 204, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.tap-target {
+  min-height: 44px;
+}
+
+.mv-button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--app-fg);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.mv-button:hover {
+  border-color: rgba(0, 229, 204, 0.45);
+  color: #00E5CC;
+  transform: translateY(-1px);
+}
+
+.mv-button:active {
+  transform: translateY(0);
+}
+
+.mv-button-primary {
+  background: linear-gradient(135deg, rgba(0, 229, 204, 0.16), rgba(0, 229, 204, 0.06));
+  border-color: rgba(0, 229, 204, 0.35);
+  color: #bffcf3;
+}
+
+.mv-button-primary:hover {
+  background: linear-gradient(135deg, rgba(0, 229, 204, 0.24), rgba(0, 229, 204, 0.12));
+}
+
+.mv-button-secondary {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.mv-button-ghost {
+  background: transparent;
+}
+
+.mv-button-danger {
+  background: rgba(255, 23, 68, 0.08);
+  border-color: rgba(255, 23, 68, 0.26);
+  color: #ff8aa0;
+}
+
+.mv-button-danger:hover {
+  border-color: rgba(255, 23, 68, 0.45);
+  color: #ff5f7f;
+  background: rgba(255, 23, 68, 0.14);
+}
+
+[data-theme='light'] .mv-button {
+  background: rgba(15, 23, 42, 0.02);
+  color: #0f172a;
+}
+
+[data-theme='light'] .mv-button:hover {
+  color: #0f766e;
+}
+
+[data-theme='light'] .mv-button-primary {
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(15, 118, 110, 0.06));
+  border-color: rgba(15, 118, 110, 0.28);
+  color: #134e4a;
+}
+
+[data-theme='light'] .mv-button-primary:hover {
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.2), rgba(15, 118, 110, 0.1));
+}
+
+[data-theme='light'] .mv-button-danger {
+  background: rgba(185, 28, 28, 0.08);
+  border-color: rgba(185, 28, 28, 0.22);
+  color: #b91c1c;
+}
+
+[data-theme='light'] .mv-button-danger:hover {
+  background: rgba(185, 28, 28, 0.12);
+  color: #991b1b;
+}
+
+/* Light mode form elements */
+[data-theme='light'] input,
+[data-theme='light'] textarea,
+[data-theme='light'] select {
+  background-color: #fafaf8 !important;
+  color: #0a0e17 !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme='light'] input:focus,
+[data-theme='light'] textarea:focus,
+[data-theme='light'] select:focus {
+  border-color: #0d9488 !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1) !important;
+}
+
+[data-theme='light'] input::placeholder,
+[data-theme='light'] textarea::placeholder {
+  color: #64748b !important;
+}
+
+[data-theme='light'] label {
+  color: #1f2937 !important;
+}
+
+[data-theme='light'] .clinical-card {
+  background: #fafaf8 !important;
+  border-color: #d4cec6 !important;
+}
+
+[data-theme='light'] .drop-zone {
+  border-color: #0d9488 !important;
+}
+
+[data-theme='light'] .drop-zone:hover,
+[data-theme='light'] .drop-zone.drag-over {
+  background: rgba(13, 148, 136, 0.05) !important;
+  border-color: #0d9488 !important;
+}
+
+[data-theme='light'] a {
+  color: #0d9488 !important;
+}
+
+[data-theme='light'] a:hover {
+  color: #115e59 !important;
+}
+
+@media (min-width: 768px) {
+  .clinical-card {
+    padding: 1.25rem;
+  }
+}
+
+.clinical-card-left {
+  border-left-width: 6px;
+  border-left-style: solid;
+}
+
+/* Teal glow for active states */
+.teal-glow {
+  box-shadow: 0 0 12px rgba(0, 229, 204, 0.3), 0 0 24px rgba(0, 229, 204, 0.1);
+}
+
+/* Pulsing animations */
+@keyframes pulse-teal {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(0, 229, 204, 0.6); }
+  50%        { opacity: 0.6; box-shadow: 0 0 20px rgba(0, 229, 204, 1); }
+}
+
+@keyframes pulse-danger {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px rgba(213, 0, 0, 0.8); }
+  50%        { opacity: 0.7; box-shadow: 0 0 24px rgba(213, 0, 0, 1); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%        { transform: scale(1.4); opacity: 0.6; }
+}
+
+@keyframes scan-line {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.pulse-teal    { animation: pulse-teal 2s ease-in-out infinite; }
+.pulse-danger  { animation: pulse-danger 1s ease-in-out infinite; }
+.pulse-dot     { animation: pulse-dot 1.5s ease-in-out infinite; }
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed #00E5CC;
+  transition: all 0.2s ease;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: #00E5CC;
+  background: rgba(0, 229, 204, 0.05);
+  box-shadow: 0 0 20px rgba(0, 229, 204, 0.2);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: #0A0E17; }
+::-webkit-scrollbar-thumb  { background: #1F2937; border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #00E5CC; }
+
+[data-theme='light'] ::-webkit-scrollbar-track  { background: #d6d3cc; }
+[data-theme='light'] ::-webkit-scrollbar-thumb  { background: #a8a39a; }
+[data-theme='light'] ::-webkit-scrollbar-thumb:hover { background: #0f766e; }
+
+/* Tag pills */
+.tag-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  background: rgba(0,229,204,0.1);
+  border: 1px solid rgba(0,229,204,0.3);
+  color: #00E5CC;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  margin: 2px;
+}
+
+/* Status dot */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+@media (max-width: 640px) {
+  body::after {
+    background-size: 28px 28px;
+  }
+}
+
+/* Light-theme utility remap for existing Tailwind-heavy pages */
+[data-theme='light'] .bg-slate-950 { background-color: #e4e4df !important; }
+[data-theme='light'] .bg-slate-900 { background-color: #f2f1ec !important; }
+[data-theme='light'] .bg-black\/40,
+[data-theme='light'] .bg-black\/20,
+[data-theme='light'] .bg-black\/70 { background-color: rgba(15, 23, 42, 0.10) !important; }
+[data-theme='light'] .text-slate-100,
+[data-theme='light'] .text-white { color: #0a0e17 !important; }
+[data-theme='light'] .text-slate-400,
+[data-theme='light'] .text-gray-400 { color: #1f2937 !important; }
+[data-theme='light'] .text-slate-500,
+[data-theme='light'] .text-gray-500,
+[data-theme='light'] .text-gray-600 { color: #374151 !important; }
+[data-theme='light'] .text-slate-300,
+[data-theme='light'] .text-gray-300 { color: #1f2937 !important; }
+[data-theme='light'] .border-slate-800,
+[data-theme='light'] .border-slate-700,
+[data-theme='light'] .border-mv-border,
+[data-theme='light'] .border-gray-800,
+[data-theme='light'] .border-gray-700 { border-color: #cbd5e1 !important; }
+[data-theme='light'] .hover\:border-slate-600:hover { border-color: #94a3b8 !important; }
+[data-theme='light'] .hover\:text-emerald-300:hover,
+[data-theme='light'] .hover\:text-mv-teal:hover { color: #0d9488 !important; }
+[data-theme='light'] h1,
+[data-theme='light'] h2,
+[data-theme='light'] h3,
+[data-theme='light'] h4,
+[data-theme='light'] h5,
+[data-theme='light'] h6 { color: #0a0e17 !important; }
+
+/* NOTE:
+  Do not force generic text elements/classes in light mode.
+  Broad !important overrides (p/span/li/.font-mono/.uppercase) can break
+  intentional high-contrast UI blocks (e.g., dark cards with teal text).
+  Let component-level utility classes control color.
+*/

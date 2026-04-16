@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Environment
+.env
+.env.local
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs and runtime outputs
+*.log
+backend/logs/*.jsonl
+backend/reports/*.json
+backend/uploads/*
+!backend/uploads/.gitkeep
+!backend/logs/.gitkeep
+!backend/reports/.gitkeep
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Training / generated artifacts
+backend/data/raw/
+backend/data/training/
+backend/data/training_v2/
+backend/data/**/test/
+backend/data/**/train/
+backend/data/**/val/
+backend/checkpoints/*.gguf
+backend/checkpoints/*.pth
+backend/checkpoints/*.pt
+backend/checkpoints/*.bin
+*.tar.gz
+
+# Temporary test output files
+*_out.txt
+backend/*output*.txt
+backend/*fail*.txt
