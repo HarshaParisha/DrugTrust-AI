@@ -132,11 +132,44 @@ class FusionEngine:
             elif med_name and not is_known:
                 flags.append("DB_MISSING")
 
-            # Strongly prefer known medicine names to surface as green/likely genuine.
-            # This is intentionally product-oriented: if the tablet name is verified
-            # against the medicine database and there are no conflicting reference signals,
-            # push confidence into the 98-99 band instead of pessimistically marking it high risk.
-            if (
+            # ── Check for counterfeit samples and missing critical information ──
+            is_counterfeit_sample = False
+            missing_critical_info = False
+            
+            if is_known:
+                # Check if medicine in DB is marked as counterfeit sample
+                for entry in self.medicines_db:
+                    brand = (entry.get("brand_name") or "").lower()
+                    if med_name in brand or brand in med_name:
+                        is_counterfeit_sample = bool(entry.get("is_counterfeit_sample", False))
+                        break
+            
+            # Check for missing critical information (manufacture date, expiry date)
+            mfg_date = (ocr_result.get("mfg_date") or "").strip().upper()
+            expiry_date = (ocr_result.get("expiry_date") or "").strip().upper()
+            
+            # Flag as suspicious if critical dates are missing or say "NOT LEGIBLE"
+            if (not mfg_date or "NOT LEGIBLE" in mfg_date or "UNKNOWN" in mfg_date or
+                not expiry_date or "NOT LEGIBLE" in expiry_date or "UNKNOWN" in expiry_date):
+                missing_critical_info = True
+                flags.append("MISSING_CRITICAL_DATES")
+            
+            # If counterfeit sample OR missing critical info, flag as HIGH RISK
+            if is_counterfeit_sample or missing_critical_info:
+                flags.append("COUNTERFEIT_INDICATOR_DETECTED")
+                # Set confidence to ~48% to indicate suspicious/fake
+                final_confidence = 48.0
+                risk_tier = 5  # HIGH RISK - COUNTERFEIT
+                
+                if is_counterfeit_sample:
+                    flags.append("KNOWN_COUNTERFEIT_SAMPLE")
+                if missing_critical_info:
+                    flags.append("CRITICAL_INFO_MISSING")
+                
+                logger.warning(f"Counterfeit indicators detected for {med_name}: is_counterfeit_sample={is_counterfeit_sample}, missing_dates={missing_critical_info}")
+            
+            # Only boost to high confidence if NOT counterfeit and no reference mismatch
+            elif (
                 is_known
                 and expiry_status != "EXPIRED"
                 and "REFERENCE_MISMATCH" not in flags
