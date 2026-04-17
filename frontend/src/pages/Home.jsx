@@ -5,6 +5,7 @@ import { Search, ShieldCheck, FileText, Brain, AlertTriangle, ExternalLink, Arro
 import UploadZone from '../components/UploadZone';
 import ScanProgress from '../components/ScanProgress';
 import { verifyImage } from '../api/medverify';
+import { makeScanCacheSnapshot, safeSessionStorageSet } from '../utils/scanCache';
 
 const PILLS = [
   { label: 'Visual Counterfeit Detection', icon: ShieldCheck },
@@ -63,8 +64,11 @@ export default function Home({ setScanResult }) {
       setCompleted(['upload','vision','ocr','llm']);
       setStage(null);
       setScanResult && setScanResult(result);
-      // Cache in sessionStorage
-      sessionStorage.setItem(`scan_${result.scan_id}`, JSON.stringify(result));
+      // Cache a trimmed snapshot only; Result hydrates the full scan from the backend.
+      const snapshot = makeScanCacheSnapshot(result);
+      if (snapshot) {
+        safeSessionStorageSet(`scan_${result.scan_id}`, JSON.stringify(snapshot));
+      }
       navigate(`/result/${result.scan_id}`);
     } catch (e) {
       if (e?.name === 'AbortError') {

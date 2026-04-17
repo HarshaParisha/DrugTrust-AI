@@ -32,16 +32,40 @@ export default function Result({ cachedResult }) {
   const [llmLoading, setLlmLoading] = useState(true);
 
   useEffect(() => {
-    // Try sessionStorage first
-    const cached = sessionStorage.getItem(`scan_${scanId}`);
-    if (cached) {
-      try { setResult(JSON.parse(cached)); setLoading(false); return; } catch {}
-    }
-    // Fetch from API
-    getScan(scanId)
-      .then(setResult)
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false));
+    let active = true;
+
+    const load = async () => {
+      const cached = sessionStorage.getItem(`scan_${scanId}`);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (active) setResult(parsed);
+          // Summary snapshots should still hydrate from the API so the full
+          // payload is available (heatmap, debug traces, etc.).
+          if (parsed?.__cache_scope !== 'summary') {
+            if (active) setLoading(false);
+            return;
+          }
+        } catch {
+          // Ignore bad cache entries and continue to the API.
+        }
+      }
+
+      try {
+        const full = await getScan(scanId);
+        if (active) setResult(full);
+      } catch (e) {
+        if (active) setError(e.message);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    load();
+
+    return () => {
+      active = false;
+    };
   }, [scanId]);
 
   useEffect(() => {

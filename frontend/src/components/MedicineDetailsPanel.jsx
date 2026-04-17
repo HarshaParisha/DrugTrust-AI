@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { analyzeMedicineByScan } from '../api/medverify';
+import { safeSessionStorageSet } from '../utils/scanCache';
 import {
   Pill,
   Package,
@@ -128,7 +129,7 @@ export default function MedicineDetailsPanel({ scanId, imageHash, onAnalyze, bas
       if (result?.data) {
         const normalized = normalizeMedicineData(result.data);
         setMedicineData(normalized);
-        sessionStorage.setItem(`medicine_${scanId}`, JSON.stringify(normalized));
+        safeSessionStorageSet(`medicine_${scanId}`, JSON.stringify(normalized));
         setExpanded(true);
         if (onAnalyze) onAnalyze(normalized);
       } else {

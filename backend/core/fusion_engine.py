@@ -99,14 +99,15 @@ class FusionEngine:
             med_name = med_name_raw.lower()
             mfg_name = (ocr_result.get("manufacturer_name") or "").lower().strip()
             
-            is_known = False
+            matching_entries = []
             if med_name:
                 for entry in self.medicines_db:
                     brand = (entry.get("brand_name") or "").lower()
                     generic = (entry.get("generic_name") or "").lower()
                     if med_name in brand or brand in med_name or med_name in generic or generic in med_name:
-                        is_known = True
-                        break
+                        matching_entries.append(entry)
+
+            is_known = bool(matching_entries)
 
             # Standard production fusion flow
             final_confidence = self._apply_db_crosscheck(ocr_result, final_confidence, flags)
@@ -136,13 +137,11 @@ class FusionEngine:
             is_counterfeit_sample = False
             missing_critical_info = False
             
-            if is_known:
-                # Check if medicine in DB is marked as counterfeit sample
-                for entry in self.medicines_db:
-                    brand = (entry.get("brand_name") or "").lower()
-                    if med_name in brand or brand in med_name:
-                        is_counterfeit_sample = bool(entry.get("is_counterfeit_sample", False))
-                        break
+            if matching_entries:
+                # Prefer any matching counterfeit profile over genuine entries.
+                is_counterfeit_sample = any(bool(entry.get("is_counterfeit_sample", False)) for entry in matching_entries)
+                if is_counterfeit_sample:
+                    flags.append("COUNTERFEIT_DB_MATCH")
             
             # Check for missing critical information (manufacture date, expiry date)
             mfg_date = (ocr_result.get("mfg_date") or "").strip().upper()
