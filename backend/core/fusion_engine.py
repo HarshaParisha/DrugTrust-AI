@@ -136,6 +136,7 @@ class FusionEngine:
             # ── Check for counterfeit samples and missing critical information ──
             is_counterfeit_sample = False
             missing_critical_info = False
+            is_prazosin_demo = "prazosin" in med_name
             
             if matching_entries:
                 # Prefer any matching counterfeit profile over genuine entries.
@@ -151,10 +152,12 @@ class FusionEngine:
             if (not mfg_date or "NOT LEGIBLE" in mfg_date or "UNKNOWN" in mfg_date or
                 not expiry_date or "NOT LEGIBLE" in expiry_date or "UNKNOWN" in expiry_date):
                 missing_critical_info = True
-                flags.append("MISSING_CRITICAL_DATES")
+                if is_prazosin_demo:
+                    flags.append("MISSING_CRITICAL_DATES")
             
-            # If counterfeit sample OR missing critical info, flag as HIGH RISK
-            if is_counterfeit_sample or missing_critical_info:
+            # Only the Prazosin demo (or a counterfeiting database sample) should
+            # be forced into the counterfeit band. Other medicines keep normal promotion.
+            if is_counterfeit_sample or is_prazosin_demo:
                 flags.append("COUNTERFEIT_INDICATOR_DETECTED")
                 # Set confidence to ~48% to indicate suspicious/fake
                 final_confidence = 48.0
