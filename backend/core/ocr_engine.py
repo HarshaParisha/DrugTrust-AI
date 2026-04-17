@@ -339,11 +339,24 @@ class OCREngine:
         match_sources: Dict[str, str] = {}
         for field, patterns in PATTERNS.items():
             for pattern in patterns:
-                match = re.search(pattern, raw_text, re.IGNORECASE | re.MULTILINE)
-                if match:
-                    fields[field] = match.group(1).strip()
-                    match_sources[field] = f"regex:{pattern}"
-                    break
+                try:
+                    match = re.search(pattern, raw_text, re.IGNORECASE | re.MULTILINE)
+                    if match:
+                        # Safely get group(1) if it exists, otherwise use full match
+                        try:
+                            extracted = match.group(1).strip()
+                        except IndexError:
+                            # Pattern has no capturing group, use full match
+                            extracted = match.group(0).strip()
+                        
+                        if extracted:
+                            fields[field] = extracted
+                            match_sources[field] = f"regex:{pattern}"
+                            break
+                except Exception as e:
+                    logger.debug(f"Pattern error for {field}: {e}")
+                    continue
+            
             if field not in fields:
                 fields[field] = None
 
