@@ -1,0 +1,73 @@
+{
+  "medicine_id": 745,
+  "brand_name": "Prazosin-5 XL",
+  "generic_name": "Prazosin Hydrochloride",
+  "category": "COUNTERFEIT",
+  "source": "Real counterfeit medicine package",
+  "date_added": "2026-04-17",
+  "image_reference": "prazosin_5xl_fake_sample.png",
+  "sample_classification": "FAKE",
+  "confidence_level": "HIGH",
+  "red_flags_detected": [
+    {
+      "category": "Missing Security Features",
+      "details": "No hologram visible",
+      "severity": "CRITICAL"
+    },
+    {
+      "category": "Missing Security Features",
+      "details": "No QR code scanner badge detected",
+      "severity": "CRITICAL"
+    },
+    {
+      "category": "Missing Critical Information",
+      "details": "Manufacture date not clearly visible or legible",
+      "severity": "CRITICAL"
+    },
+    {
+      "category": "Missing Critical Information",
+      "details": "Expiration date not clearly visible or legible",
+      "severity": "CRITICAL"
+    },
+    {
+      "category": "Visual Quality Issues",
+      "details": "Heavy pixelation and compression artifacts",
+      "severity": "HIGH"
+    },
+    {
+      "category": "Visual Quality Issues",
+      "details": "Inconsistent text rendering - mix of clear and blurry",
+      "severity": "HIGH"
+    },
+    {
+      "category": "Color Anomalies",
+      "details": "Pill color appears oversaturated and artificial",
+      "severity": "HIGH"
+    },
+    {
+      "category": "Packaging Issues",
+      "details": "Red warning box appears duplicated and misaligned",
+      "severity": "HIGH"
+    },
+    {
+      "category": "Packaging Issues",
+      "details": "Blister pack lacks traditional tamper-evident design",
+      "severity": "HIGH"
+    },
+    {
+      "category": "Text Legibility",
+      "details": "Batch number not legible",
+      "severity": "HIGH"
+    },
+    {
+      "category": "Manufacturer Verification",
+      "details": "License number partially redacted or blacked out",
+      "severity": "HIGH"
+    }
+  ],
+  "why_its_fake": "This medicine package shows multiple critical red flags of counterfeiting: (1) Complete absence of security features like holograms and scanner badges that legitimate pharmaceuticals have; (2) Critical missing information - manufacture and expiration dates are not visible or legible; (3) Visual quality degradation indicating counterfeit production methods; (4) Text rendering inconsistencies suggesting digital manipulation; (5) Packaging anomalies that do not match standard pharmaceutical production.",
+  "risk_assessment": "TIER 5 - HIGH RISK COUNTERFEIT",
+  "recommended_action": "DO NOT USE. Return to pharmacy/distributor immediately. File report with drug regulatory authority. Consult licensed pharmacist.",
+  "safety_note": "Counterfeit medicines may contain: no active ingredient, incorrect active ingredient, harmful fillers, toxic substances, or wrong dosage. This poses severe health risks including treatment failure, adverse reactions, and potential mortality.",
+  "testing_notes": "This sample is used for training the detection model to improve accuracy in identifying counterfeit medicines in the field."
+}

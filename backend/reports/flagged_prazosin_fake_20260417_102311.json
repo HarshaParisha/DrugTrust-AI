@@ -1,0 +1,47 @@
+{
+  "medicine_name": "Prazosin-5 XL Extended-release Tablets",
+  "brand_name": "Prazosin-5 XL",
+  "generic_name": "Prazosin Hydrochloride",
+  "manufacturer_claimed": "East West Pharma (India) Private Limited",
+  "detected_category": "COUNTERFEIT",
+  "risk_tier": 5,
+  "risk_label": "HIGH RISK - COUNTERFEIT",
+  "confidence_score": 5.2,
+  "fake_indicators": {
+    "visual_anomalies": [
+      "Heavy image compression and pixelation visible",
+      "Inconsistent text rendering - mix of clear and blurry text",
+      "Color inconsistencies - blue pill color appears artificial/oversaturated",
+      "Visible watermarks and grid patterns overlay (anti-counterfeiting measure sign)"
+    ],
+    "missing_security_features": [
+      "No hologram or security badge visible",
+      "No QR code scanner badge detected",
+      "No authenticity verification code visible",
+      "Blister pack lacks traditional tamper-evident design"
+    ],
+    "missing_critical_info": [
+      "No manufacture date (Mfg date) clearly visible",
+      "No expiration date (Exp date) clearly visible",
+      "Batch number not legible",
+      "Lot number appears manipulated or missing",
+      "License number partially redacted/blacked out"
+    ],
+    "packaging_issues": [
+      "Text layering appears uneven",
+      "Red warning box appears duplicated and misaligned",
+      "Manufacturer branding inconsistent across packaging",
+      "Printing quality below standard pharmaceutical grade"
+    ],
+    "labeling_concerns": [
+      "Directions for use unclear or partially obscured",
+      "Storage instructions appears incomplete",
+      "Warning text has poor contrast and readability"
+    ]
+  },
+  "why_its_fake": "Multiple critical red flags detected: (1) Missing security features (no scanner badge, no hologram), (2) Critical missing information (manufacture/expiration dates not visible), (3) Visual quality issues indicating counterfeit production, (4) Inconsistent text rendering suggesting image manipulation, (5) Manufacturer address region does not match claimed company information.",
+  "recommended_action": "DO NOT USE. Return to pharmacy/distributor. File report with drug regulatory authority. Seek prescription verification from licensed pharmacist.",
+  "safety_concern": "Counterfeit medicines may contain incorrect active ingredients, harmful fillers, or no active ingredient at all, leading to treatment failure and potential health complications.",
+  "date_detected": "2026-04-17T10:23:11.852876",
+  "source": "Mobile scanner - medical verification workflow"
+}

@@ -20955,5 +20955,54 @@
     "storage": "Store in a cool, dry place below 30°C.",
     "schedule": "Schedule H",
     "id": 744
+  },
+  {
+    "id": 745,
+    "brand_name": "Prazosin-5 XL",
+    "generic_name": "Prazosin Hydrochloride",
+    "salt_composition": "Prazosin Hydrochloride 5mg (Extended-release)",
+    "category": "Antihypertensive",
+    "manufacturer": "East West Pharma (India) Private Limited",
+    "requires_prescription": true,
+    "batch_number": "UNKNOWN",
+    "mfg_date": "NOT LEGIBLE",
+    "expiry_date": "NOT LEGIBLE",
+    "is_counterfeit_sample": true,
+    "counterfeiting_indicators": {
+      "missing_security_features": "No hologram, no QR scanner badge, no authenticity code",
+      "missing_dates": "Manufacture and expiration dates not clearly visible",
+      "visual_quality": "Heavy pixelation, inconsistent text rendering, artificial pill color",
+      "packaging_issues": "Red warning box duplicated/misaligned, blister pack lacks tamper-evident design"
+    },
+    "used_for": [
+      "Hypertension (high blood pressure)",
+      "PTSD nightmares"
+    ],
+    "how_to_take": "Take as directed by physician - do NOT take this counterfeit version",
+    "common_side_effects": [
+      "Dizziness",
+      "Lightheadedness",
+      "Headache",
+      "Fatigue"
+    ],
+    "serious_side_effects": [
+      "Syncope (fainting)",
+      "Tachycardia",
+      "Angina"
+    ],
+    "interactions": [
+      "NSAIDs",
+      "Sympathomimetics",
+      "Tricyclic antidepressants"
+    ],
+    "safe_for_pregnant": "Consult doctor",
+    "safe_for_children": "No",
+    "safe_for_elderly": "Use with caution",
+    "safe_for_diabetics": "Yes",
+    "overdose_warning": "Overdose can cause severe hypotension, syncope, and cardiovascular complications. Seek emergency care immediately.",
+    "storage": "Store in cool, dry place below 30C. Keep away from moisture.",
+    "safety_note": "THIS IS A COUNTERFEIT MEDICINE USED FOR TESTING. DO NOT CONSUME.",
+    "schedule": "Schedule H",
+    "detection_confidence": "HIGH - Multiple red flags detected"
   }
 ]
